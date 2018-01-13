@@ -1,0 +1,3 @@
+echo "ls ; exit" | script -a hello.log
+
+exit

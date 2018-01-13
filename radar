@@ -1,0 +1,18 @@
+#!/usr/bin/perl -w
+
+use RADAR;
+use UniLang::Agent::Agent;
+use UniLang::Util::Message;
+
+$UNIVERSAL::agent = UniLang::Agent::Agent->new
+  (Name => "RADAR",
+   ReceiveHandler => \&Receive);
+$UNIVERSAL::radar = RADAR->new();
+
+sub Receive {
+  my %args = @_;
+  $UNIVERSAL::radar->ProcessMessage
+    (Message => $args{Message});
+}
+
+$UNIVERSAL::radar->Execute;

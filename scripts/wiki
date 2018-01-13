@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Wiki - Alite - Redmine</title>
+<meta name="description" content="Redmine" />
+<meta name="keywords" content="issue,bug,tracker" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="Vk1nvnVfWexqncQK70uvI2uQrl3XxIGWSSKxsvNLQoQ=" name="csrf-token" />
+<link rel='shortcut icon' href='/redmine/favicon.ico?1387788522' />
+<link href="/redmine/stylesheets/jquery/jquery-ui-1.9.2.css?1387788522" media="all" rel="stylesheet" type="text/css" />
+<link href="/redmine/stylesheets/application.css?1387788522" media="all" rel="stylesheet" type="text/css" />
+
+<script src="/redmine/javascripts/jquery-1.8.3-ui-1.9.2-ujs-2.0.3.js?1387788522" type="text/javascript"></script>
+<script src="/redmine/javascripts/application.js?1387788522" type="text/javascript"></script>
+<script type="text/javascript">
+//<![CDATA[
+$(window).load(function(){ warnLeavingUnsaved('The current page contains unsaved text that will be lost if you leave this page.'); });
+//]]>
+</script>
+
+  <script src="/redmine/plugin_assets/redmine_code_review/javascripts/code_review.js" type="text/javascript"></script>
+  <script src="/redmine/javascripts/jstoolbar/jstoolbar.js" type="text/javascript"></script>
+  <script src="/redmine/javascripts/jstoolbar/textile.js" type="text/javascript"></script>
+  <script src="/redmine/javascripts/jstoolbar/lang/jstoolbar-en.js" type="text/javascript"></script>
+  <link href="/redmine/plugin_assets/redmine_code_review/stylesheets/code_review.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href="/redmine/stylesheets/jstoolbar.css" media="screen" rel="stylesheet" type="text/css" />
+
+<!-- page specific tags -->
+</head>
+<body class="project-alite controller-wiki action-show">
+<div id="wrapper">
+<div id="wrapper2">
+<div id="wrapper3">
+<div id="top-menu">
+    <div id="account">
+        <ul><li><a href="/redmine/login" class="login">Sign in</a></li>
+<li><a href="/redmine/account/register" class="register">Register</a></li></ul>    </div>
+    
+    <ul><li><a href="/redmine/" class="home">Home</a></li>
+<li><a href="/redmine/projects" class="projects">Projects</a></li>
+<li><a href="http://www.redmine.org/guide" class="help">Help</a></li></ul></div>
+
+<div id="header">
+    <div id="quick-search">
+        <form accept-charset="UTF-8" action="/redmine/projects/alite/search" method="get"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /></div>
+        <input name="wiki_pages" type="hidden" value="1" />
+        <label for='q'>
+          <a href="/redmine/projects/alite/search" accesskey="4">Search</a>:
+        </label>
+        <input accesskey="f" class="small" id="q" name="q" size="20" type="text" />
+</form>        
+    </div>
+
+    <h1>Alite</h1>
+
+    <div id="main-menu">
+        <ul><li><a href="/redmine/projects/alite" class="overview">Overview</a></li>
+<li><a href="/redmine/projects/alite/activity" class="activity">Activity</a></li>
+<li><a href="/redmine/projects/alite/roadmap" class="roadmap">Roadmap</a></li>
+<li><a href="/redmine/projects/alite/issues" class="issues">Issues</a></li>
+<li><a href="/redmine/projects/alite/issues/gantt" class="gantt">Gantt</a></li>
+<li><a href="/redmine/projects/alite/issues/calendar" class="calendar">Calendar</a></li>
+<li><a href="/redmine/projects/alite/news" class="news">News</a></li>
+<li><a href="/redmine/projects/alite/documents" class="documents">Documents</a></li>
+<li><a href="/redmine/projects/alite/wiki" class="wiki selected">Wiki</a></li>
+<li><a href="/redmine/projects/alite/boards" class="boards">Forums</a></li>
+<li><a href="/redmine/projects/alite/files" class="files">Files</a></li>
+<li><a href="/redmine/projects/alite/repository" class="repository">Repository</a></li></ul>
+    </div>
+</div>
+
+<div id="main" class="">
+    <div id="sidebar">
+            <a name="Alite-Download"></a>
+<h3 ><strong>Alite Download</strong><a href="#Alite-Download" class="wiki-anchor">&para;</a></h3>
+
+
+	<p><a href="http://jones.felk.cvut.cz/redmine/projects/alite/files" class="external">Regular Builds</a><br /><a href="http://jones.felk.cvut.cz/artifactory/webapp/browserepo.html?pathId=libs-snapshot-local%3Acz%2Fagents%2Falite" class="external">Snapshot Build [Maven Repository]</a></p>
+
+
+	<p>Public <a href="http://mercurial.selenic.com/" class="external">Mercurial</a> repository:<br />&nbsp;&nbsp;&nbsp;<code>hg clone http://jones.felk.cvut.cz/repo/alite</code></p>
+
+
+	<a name="Modules-Download"></a>
+<h3 ><strong>Modules Download</strong><a href="#Modules-Download" class="wiki-anchor">&para;</a></h3>
+
+
+	<p><a href="/redmine/projects/trajectorytools/wiki" class="wiki-page">Trajectory Tools</a>:<br />&nbsp;&nbsp;&nbsp;<code>https://github.com/mcapino/trajectorytools.git</code> (ver. 2.x)<br />&nbsp;&nbsp;&nbsp;<code>https://github.com/mcapino/trajectorytools.git</code> (branch: version1, ver. 1.x)</p>
+
+
+	<p><a href="/redmine/projects/deconflictiontools/wiki" class="wiki-page">Deconfliction Tools</a>:<br />&nbsp;&nbsp;&nbsp;<code>hg clone http://jones.felk.cvut.cz/repo/alite-deconflictiontools</code></p>
+
+
+	<p><a href="/redmine/projects/alite/wiki/Config_Reader" class="wiki-page">Config Reader</a>:<br />&nbsp;&nbsp;&nbsp;<code>hg clone http://jones.felk.cvut.cz/repo/alite-configurator-configreader</code></p>
+
+
+	<p><a href="/redmine/projects/alite/wiki/Template_Groovy_Configurator" class="wiki-page">Template Groovy Configurator</a>:<br />&nbsp;&nbsp;&nbsp;<code>hg clone http://jones.felk.cvut.cz/repo/alite-configurator-templategroovy</code></p>
+
+
+	<p><a href="/redmine/projects/alite/wiki/Vis_3D" class="wiki-page">Vis 3D</a>:<br />&nbsp;&nbsp;&nbsp;<code>hg clone http://jones.felk.cvut.cz/repo/alite-vis3d</code></p>
+
+
+	<p><a href="/redmine/projects/alite/wiki/KML_Visio" class="wiki-page">KML Visio</a>:<br />&nbsp;&nbsp;&nbsp;<code>hg clone http://jones.felk.cvut.cz/repo/alite-kmlvisio</code><br />&nbsp;&nbsp;&nbsp;<code>hg clone http://jones.felk.cvut.cz/repo/alite-kmlvisio-customjak</code></p>
+
+
+	<p><a href="/redmine/projects/alite/wiki/Aglobe_Adapter" class="wiki-page">Aglobe Adapter</a>:<br />&nbsp;&nbsp;&nbsp;<code>hg clone http://jones.felk.cvut.cz/repo/alite-aglobeadapter</code></p>
+
+
+	<a name="Packages"></a>
+<h3 >Packages<a href="#Packages" class="wiki-anchor">&para;</a></h3>
+
+
+	<p style="text-align:center;"><a href="http://jones.felk.cvut.cz/redmine/projects/agentpolis/wiki"><img src="/redmine/attachments/download/157/agentpolis-london.jpg" alt="" /></a><br /><a href="http://jones.felk.cvut.cz/redmine/projects/agentpolis/wiki" class="external">AgentPolis</a> (urban simulator)</p>
+
+
+	<p style="text-align:center;"><a href="http://jones.felk.cvut.cz/redmine/projects/tacticalenvironment/wiki"><img src="/redmine/attachments/download/159/alite-tactical.png" alt="" /></a><br /><a href="http://jones.felk.cvut.cz/redmine/projects/tacticalenvironment/wiki" class="external">Alite Tactical Package</a> (tactical mission simulator)</p>
+
+<h3>Wiki</h3>
+<ul>
+  <li><a href="/redmine/projects/alite/wiki">Start page</a></li>
+  <li><a href="/redmine/projects/alite/wiki/index">Index by title</a></li>
+  <li><a href="/redmine/projects/alite/wiki/date_index">Index by date</a></li>
+</ul>
+
+
+        
+    </div>
+
+    <div id="content">
+        
+        <div class="contextual">
+  
+  
+  
+  
+  
+  
+<a href="/redmine/projects/alite/wiki/Wiki/history" class="icon icon-history">History</a>
+</div>
+
+
+
+
+<div class="wiki wiki-page">
+  <a name="Alite"></a>
+<h1 >Alite<a href="#Alite" class="wiki-anchor">&para;</a></h1>
+
+
+	<p><strong>Alite</strong> <em>[’eilait]</em> is a software toolkit helping with particular implementation steps during construction of multi-agent simulations and multi-agent systems in general. The goals of the toolkit are to provide highly <em>modular</em>, <em>variable</em>, and <em>open</em> set of functionalities defined by clear and simple API. The toolkit does not serve as a pre-designed framework for a complex purpose, it rather associates number of highly refined functional elements, which can be variably combined and extended into a wide spectrum of possible systems. Alite is licensed under <a href="http://www.gnu.org/licenses/lgpl-3.0.en.html" class="external">LGPL3</a>.</p>
+
+
+	<ul class="toc right"><li><a href="#Alite">Alite</a><ul><li><a href="#Documentation">Documentation</a><ul><li><a href="#Alite-Main">Alite Main</a></li><li><a href="#Core">Core</a></li><li><a href="#Modules">Modules</a></li></ul>
+</li><li><a href="#Conventions">Conventions</a><ul><li><a href="#Feature-Acceptance-Process">Feature Acceptance Process</a></li><li><a href="#Code-Eclipse-Formatter">Code (Eclipse Formatter)</a></li><li><a href="#Committing">Committing</a></li></ul>
+</li><li><a href="#Version-Schema">Version Schema</a></li><li><a href="#Repositories">Repositories</a></li><li><a href="#Blueprints">Blueprints</a></li></ul></li></ul>
+
+
+	<a name="Documentation"></a>
+<h2 >Documentation<a href="#Documentation" class="wiki-anchor">&para;</a></h2>
+
+
+	<a name="Alite-Main"></a>
+<h3 >Alite Main<a href="#Alite-Main" class="wiki-anchor">&para;</a></h3>
+
+
+	<ul>
+	<li><a href="/redmine/projects/alite/wiki/Alite_Overview" class="wiki-page">Alite Overview</a></li>
+		<li><a href="http://jones.felk.cvut.cz/alite-javadoc" class="external">JavaDoc</a>
+	<ul>
+	<li><a href="http://jones.felk.cvut.cz/alite-vis3d-javadoc" class="external">Vis3D module JavaDoc</a></li>
+	</ul>
+	</li>
+		<li><a href="/redmine/projects/alite/wiki/Alite_FAQ" class="wiki-page">Alite FAQ</a></li>
+	</ul>
+
+
+	<ul>
+	<li><a href="/redmine/projects/alite/wiki/Alite_and_Aglobe" class="wiki-page">Alite and Aglobe</a></li>
+		<li><a href="/redmine/projects/alite/wiki/Synchronized_Visualization" class="wiki-page">Synchronized Visualization</a></li>
+	</ul>
+
+
+	<a name="Core"></a>
+<h3 >Core<a href="#Core" class="wiki-anchor">&para;</a></h3>
+
+
+	<ul>
+	<li><a href="/redmine/projects/alite/wiki/Alite_Overview#Creator" class="wiki-page">Creator</a></li>
+		<li><a href="/redmine/projects/alite/wiki/Alite_Overview#Configuration" class="wiki-page">Configuration</a></li>
+		<li><a href="/redmine/projects/alite/wiki/Alite_Overview#Common-Event-Queue" class="wiki-page">Common (Event Queue, Entity, Capability Register)</a></li>
+		<li><a href="/redmine/projects/alite/wiki/Alite_Overview#Environment" class="wiki-page">Environment</a></li>
+		<li><a href="/redmine/projects/alite/wiki/Alite_Overview#Simulation" class="wiki-page">Simulation</a></li>
+		<li><a href="/redmine/projects/alite/wiki/Alite_Overview#Communication" class="wiki-page">Communication</a></li>
+		<li><a href="/redmine/projects/alite/wiki/Alite_Overview#Planners" class="wiki-page">Planners</a></li>
+		<li><a href="/redmine/projects/alite/wiki/Alite_Overview#Visualizations" class="wiki-page">Visualization (2D)</a></li>
+	</ul>
+
+
+	<a name="Modules"></a>
+<h3 >Modules<a href="#Modules" class="wiki-anchor">&para;</a></h3>
+
+
+	<ul>
+	<li><a href="/redmine/projects/alite/wiki/Config_Reader" class="wiki-page">Config Reader</a> <em>(configurator/configreader)</em></li>
+		<li><a href="/redmine/projects/alite/wiki/Template_Groovy_Configurator" class="wiki-page">Template Groovy Configurator</a> <em>(configurator/templategroovy)</em></li>
+		<li><a href="/redmine/projects/alite/wiki/ZeroMQ_Communication?parent=Wiki" class="wiki-page new">ZeroMQ Communication</a> <em>(zeromq)</em></li>
+		<li><a href="/redmine/projects/alite/wiki/Protocol_Buffers_Based_Messages?parent=Wiki" class="wiki-page new">Protocol Buffers Based Messages</a> <em>(protobuf)</em></li>
+	</ul>
+
+
+	<ul>
+	<li><a href="/redmine/projects/alite/wiki/Visualization_3D" class="wiki-page">Visualization 3D</a> <em>(vis3d)</em></li>
+		<li><a href="/redmine/projects/alite/wiki/KML_Visio" class="wiki-page">KML Visio</a> <em>(kmlvisio)</em></li>
+		<li><a href="/redmine/projects/alite/wiki/Aglobe_Adapter" class="wiki-page">Aglobe Adapter</a> <em>(aglobeadapter)</em></li>
+	</ul>
+
+
+	<ul>
+	<li><a href="/redmine/projects/trajectorytools/wiki" class="wiki-page">Trajectory Tools</a> <em>(trajectorytools)</em></li>
+		<li><a href="/redmine/projects/deconflictiontools/wiki" class="wiki-page">Deconfliction Tools</a> <em>(deconflictiontools)</em></li>
+		<li><a href="/redmine/projects/alite/wiki/Domain-independent_Multiagent_Planning_Tools?parent=Wiki" class="wiki-page new">Domain-independent Multiagent Planning Tools</a> <em>(dimaptools)</em></li>
+	</ul>
+
+
+Experimental:
+	<ul>
+	<li><a href="/redmine/projects/alite/wiki/Visualizer2D" class="wiki-page">Visualizer2D</a> <em>(visualizer2d)</em></li>
+		<li><a href="/redmine/projects/alite/wiki/NetEmu" class="wiki-page">NetEmu</a> <em>(netemu)</em></li>
+	</ul>
+
+
+	<a name="Conventions"></a>
+<h2 >Conventions<a href="#Conventions" class="wiki-anchor">&para;</a></h2>
+
+
+	<a name="Feature-Acceptance-Process"></a>
+<h3 >Feature Acceptance Process<a href="#Feature-Acceptance-Process" class="wiki-anchor">&para;</a></h3>
+
+
+	<ul>
+	<li>docs - javadoc, usage examples</li>
+		<li>tests - testing usage examples, testing complete documented functionality </li>
+		<li>design compliance - loosely coupling, API centric</li>
+	</ul>
+
+
+	<a name="Code-Eclipse-Formatter"></a>
+<h3 >Code (<a href="http://jones.felk.cvut.cz/redmine/attachments/download/46/eclipse_formatter.xml" class="external">Eclipse Formatter</a>)<a href="#Code-Eclipse-Formatter" class="wiki-anchor">&para;</a></h3>
+
+
+	<ul>
+	<li>indentation: 4 spaces</li>
+		<li>no trailing whitespaces</li>
+		<li>coding style: <a class="external" href="http://java.sun.com/docs/codeconv/">http://java.sun.com/docs/codeconv/</a></li>
+		<li>maximum line width: 100</li>
+		<li>no standard Eclipse warnings and errors in cz.agents.alite package</li>
+		<li>no standard Eclipse errors in experimental modules (warnings are tolerated in experimental modules)</li>
+	</ul>
+
+
+	<a name="Committing"></a>
+<h3 >Committing<a href="#Committing" class="wiki-anchor">&para;</a></h3>
+
+
+	<ul>
+	<li>small atomic commits (logically bounded change)</li>
+		<li>commit whole branch</li>
+		<li>for larger changes in cz.agents.alite package do special branch</li>
+		<li>always use commit message</li>
+		<li>commit message has format: <br /><pre>
+One line of commit summary (fixes #XYZ)
+
+Optionally explanation of the commit details.
+</pre></li>
+		<li>if a commit fixes a redmine issue, add (fixes #XYZ) and redmine will automatically mark it as fixed (if the commit does not fix anything in redmine do not add (fixes #XYZ) into commit message)</li>
+		<li>in case of (fixes #XYZ), the commit summary should copy the title of the issue #XYZ</li>
+		<li>do not commit any commented-out code</li>
+	</ul>
+
+
+	<a name="Version-Schema"></a>
+<h2 >Version Schema<a href="#Version-Schema" class="wiki-anchor">&para;</a></h2>
+
+
+	<p>major.minor(.revision|-SNAPSHOT)</p>
+
+
+	<ul>
+	<li>major = complete redesign (major API changes - no backward compatibility)</li>
+		<li>minor = larger changes/cumulated changes (minor API changes - as most as possible of backward compatibility, simply describable code migration process, e.g. method naming)</li>
+		<li>revision = fixes, new features (only compatible API changes - full backward compatibility)</li>
+		<li>SNAPSHOT = newest snapshot of major.minor version</li>
+	</ul>
+
+
+	<a name="Repositories"></a>
+<h2 >Repositories<a href="#Repositories" class="wiki-anchor">&para;</a></h2>
+
+
+On Mercurial (<a href="/redmine/projects/alite/wiki/Mercurial" class="wiki-page">Mercurial on Smith tutorial</a>):
+	<ul>
+	<li><strong>Alite core</strong> - ssh://<a class="email" href="mailto:USER@smith.felk.cvut.cz">USER@smith.felk.cvut.cz</a>//data/hg/alite
+	<ul>
+	<li><strong>Trajectory Tools</strong> - ssh://<a class="email" href="mailto:USER@smith.felk.cvut.cz">USER@smith.felk.cvut.cz</a>//data/hg/alite/trajectorytools</li>
+		<li><strong>Deconfliction Tools</strong> - ssh://<a class="email" href="mailto:USER@smith.felk.cvut.cz">USER@smith.felk.cvut.cz</a>//data/hg/alite/deconflictiontools</li>
+		<li><strong>DIMAP Tools</strong> - ssh://<a class="email" href="mailto:USER@smith.felk.cvut.cz">USER@smith.felk.cvut.cz</a>//data/hg/alite/dimaptools</li>
+		<li><strong>Configurators</strong>
+	<ul>
+	<li><strong>Config Reader sources</strong> - ssh://<a class="email" href="mailto:USER@smith.felk.cvut.cz">USER@smith.felk.cvut.cz</a>//data/hg/alite/configurator/configreader</li>
+		<li><strong>Template Groovy Configurator sources</strong> - ssh://<a class="email" href="mailto:USER@smith.felk.cvut.cz">USER@smith.felk.cvut.cz</a>//data/hg/alite/configurator/templategroovy</li>
+	</ul>
+	</li>
+		<li><strong>Protobuf module sources</strong> - ssh://<a class="email" href="mailto:USER@smith.felk.cvut.cz">USER@smith.felk.cvut.cz</a>//data/hg/alite/protobuf</li>
+		<li><strong>ZeroMQ module sources</strong> - ssh://<a class="email" href="mailto:USER@smith.felk.cvut.cz">USER@smith.felk.cvut.cz</a>//data/hg/alite/zeromq</li>
+		<li><strong>Vis 3D module sources</strong> - ssh://<a class="email" href="mailto:USER@smith.felk.cvut.cz">USER@smith.felk.cvut.cz</a>//data/hg/alite/vis3d</li>
+		<li><strong>KML Visio module sources</strong> - ssh://<a class="email" href="mailto:USER@smith.felk.cvut.cz">USER@smith.felk.cvut.cz</a>//data/hg/alite/kmlvisio
+	<ul>
+	<li><strong>Customized JAK module sources</strong> - ssh://<a class="email" href="mailto:USER@smith.felk.cvut.cz">USER@smith.felk.cvut.cz</a>//data/hg/alite/kmlvisio/customjak</li>
+	</ul>
+	</li>
+		<li><strong>Aglobe Adapter sources</strong> - ssh://<a class="email" href="mailto:USER@smith.felk.cvut.cz">USER@smith.felk.cvut.cz</a>//data/hg/alite/aglobeadapter</li>
+	</ul></li>
+	</ul>
+
+
+	<ul>
+	<li><strong>Alite experimental</strong>
+	<ul>
+	<li><strong>Visualizer2d sources</strong> - ssh://<a class="email" href="mailto:USER@smith.felk.cvut.cz">USER@smith.felk.cvut.cz</a>//data/hg/alite/visualizer2d</li>
+		<li><strong>NetEmu sources</strong> - ssh://<a class="email" href="mailto:USER@smith.felk.cvut.cz">USER@smith.felk.cvut.cz</a>//data/hg/alite/netemu</li>
+	</ul></li>
+	</ul>
+
+
+	<ul>
+	<li><strong>Alite documents</strong> - ssh://<a class="email" href="mailto:USER@smith.felk.cvut.cz">USER@smith.felk.cvut.cz</a>//data/hg/alite/doc</li>
+	</ul>
+
+
+	<a name="Blueprints"></a>
+<h2 >Blueprints<a href="#Blueprints" class="wiki-anchor">&para;</a></h2>
+
+
+Strategic areas of development:
+	<ul>
+	<li>Reporting and Visualization -- post-analysis, replay, debugging support etc.</li>
+		<li>Communication -- low-level (transport etc.) vs. high-level (protocols etc.)</li>
+		<li>Agent Control (behavior modularization) -- activities vs. actions, agent memory etc.</li>
+		<li>Graph/Network Environments -- representation of graph-based environments (streetnetworks etc.)</li>
+	</ul>
+</div>
+
+
+
+
+
+
+
+
+        
+        <div style="clear:both;"></div>
+    </div>
+</div>
+</div>
+
+<div id="ajax-indicator" style="display:none;"><span>Loading...</span></div>
+<div id="ajax-modal" style="display:none;"></div>
+
+<div id="footer">
+  <div class="bgl"><div class="bgr">
+    Powered by <a href="http://www.redmine.org/">Redmine</a> &copy; 2006-2013 Jean-Philippe Lang
+  </div></div>
+</div>
+</div>
+</div>
+
+
+
+
+
+</body>
+</html>

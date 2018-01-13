@@ -1,0 +1,1318 @@
+#!/usr/bin/perl -w
+
+eval 'exec /usr/bin/perl -w -S $0 ${1+"$@"}'
+    if 0; # not running under some shell
+#
+# debaux-build - Debian package building script
+#
+# Copyright 2000,2001,2002,2003,2004 Stefan Hornburg (Racke) <racke@linuxia.de>
+#
+# This program is free software; you can redistribute it
+# and/or modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later
+# version. 
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public
+# License along with this program; if not, write to the Free
+# Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA  02111-1307  USA.
+
+# Parameters
+# debdir - Directory with Debian files
+# builddir - Build directory
+# sourcedir - Directory with source archive
+
+use vars qw($VERSION);
+$VERSION = '0.001_007';
+
+# MODULES
+# =======
+
+use strict;
+use AppConfig qw(:argcount :expand);
+use CPAN;
+use Cwd;
+use File::Basename;
+use File::Copy;
+use File::Find;
+use Getopt::Long;
+use LWP::UserAgent;
+use Net::SSH qw(sshopen2 ssh_cmd);
+use POSIX qw(strftime);
+use Time::Zone;
+
+use DebAux::Util;
+
+# VARIABLES
+# =========
+
+# Upstream version number, Debian version number,
+# Debian release number and source package
+my ($vupstream, $version, $debnumber, $srcname);
+# Source package
+my ($archive, $archivefile, @archivecandidates);
+# Debian package name and architecture
+my ($debname, $debarch);
+# Configuration
+my %vars;
+# List of generated packages (used for installation)
+my @pkglist;
+# Chroot parameter
+my ($chroothost, $chrootdir, $chrootuser);
+
+# COMMANDLINE PARAMETERS
+# ======================
+
+my %opts = (version => '');
+my $whandler = $SIG{__WARN__};
+my @OLDARGV = @ARGV;
+$SIG{__WARN__} = sub {print STDERR "$0: @_";};
+unless (GetOptions (\%opts, 'apt', 'archive=s', 'build-options=s',
+					'chroot=s',	'chroot-user=s', 'cpan',
+					'directory=s', 'empty', 'extra-sources=s',
+                    'install|i', 'lintian|l', 'make-archive=s',
+					'release', 'rpm|alien', 'sign|s',
+					'source-name=s', 'source-tree=s',
+                    'stop-after-unpack', 'stop-before-build',
+					'version=s')) {
+    exit 1;
+}
+$SIG{__WARN__} = $whandler;
+
+# sanity checks
+unless (@ARGV) {
+	die "Usage: $0 DEBIANDIR\n";
+}
+my ($debiandir, $builddir, $sourcedir) = @ARGV;
+my $pkgname;
+
+# read global configuration file
+my $cfgfileref;
+my $conf = new AppConfig ({GLOBAL => {ARGCOUNT => ARGCOUNT_ONE},
+						   ERROR => sub {
+							 die ("$0: $$cfgfileref: @_\n");
+						   }
+						  });
+$conf -> define ('debauxdir', {ARGCOUNT => ARGCOUNT_HASH});
+$conf -> define ('debiandir', {DEFAULT => '', EXPAND => EXPAND_ALL});
+$conf -> define ('sharedir', {DEFAULT => '/usr/share/debaux', EXPAND => EXPAND_ALL});
+$conf -> define ('sourcedir', {DEFAULT => '/usr/local/src'});
+$conf -> define ('source-tree', {ARGCOUNT => ARGCOUNT_HASH});
+
+for my $cfgfile ("$ENV{'HOME'}/.debauxrc", '.debauxrc') {
+  	$cfgfileref = \$cfgfile;
+	if (-f $cfgfile) {
+		open (CONF, $cfgfile)
+			|| die "$0: Couldn't open configuration file $cfgfile: $!\n";
+		$conf -> file (\*CONF);
+		close (CONF);
+	}
+}
+
+if (substr($conf->get('sharedir'),0,1) ne '/') {
+	$conf->set('sharedir', cwd() . '/' . $conf->get('sharedir'));
+}
+
+unless (-d $debiandir && -f "$debiandir/debbuild") {
+	if (-f $debiandir) {
+		# check if filename matches archive
+		if (basename($debiandir) =~ m%(.*?)-(\d+(\.\d+)*)\.tar\.gz%) {
+			# build directly from the archive
+			$srcname = $1;
+			$version = $2;
+		} else {
+			die "$0: This seems not to be an archive file\n";
+		}
+	} else {
+		$pkgname = $debiandir;
+		$srcname = $debiandir;
+
+		if (exists ($conf->get('debauxdir')->{$pkgname})
+			&& -d $conf->get('debauxdir')->{$pkgname}) {
+			$debiandir = $conf->get('debauxdir')->{$pkgname};
+		} elsif ($conf->get('debiandir') =~ /\S/
+			&& -d join('/',$conf->get('debiandir'),$debiandir)) {
+			$debiandir = join('/',$conf->get('debiandir'),$debiandir);
+		}
+	}
+} else {
+	$pkgname = basename($debiandir);
+}
+
+$builddir = join('-', '/var/tmp/debaux', (getpwuid($<))[0])
+	unless defined $builddir && $builddir =~ /\S/;
+$sourcedir = $conf->get('sourcedir')
+	unless defined $sourcedir && $sourcedir =~ /\S/;
+				 
+if ($builddir !~ /^[\w\.\/\+-]+$/) {
+    die "$0: Suspicious directory name \"$builddir\"\n";
+}
+
+if ($opts{chroot}) {
+	if ($opts{chroot} =~ /^(.*?):(.*?)$/) {
+		$chroothost = $1;
+		$chrootdir = $2;
+	} else {
+		$chroothost = 'localhost';
+		$chrootdir = $opts{chroot};
+	}
+}
+
+if (! $opts{'source-tree'} && exists $conf->get('source-tree')->{$pkgname}) {
+	$opts{'source-tree'} = $conf->get('source-tree')->{$pkgname};
+}
+
+my $aptsource = 0;
+my $oldbuilddir = $builddir;
+
+if ($opts{'cpan'}) {
+	if ($conf->get('debiandir') !~ /\S/) {
+		die "$0: Global configuration option 'debiandir' needed for --cpan\n";
+	}
+	my $debianbasedir = $conf->get('debiandir');
+	
+	# CPAN configuration
+	$CPAN::Config->{keep_source} = 1;
+	
+	# check CPAN 
+
+	my @objs = CPAN::expand ('Module', $debiandir);
+	unless (@objs) {
+		die "$0: No hit on CPAN for $debiandir\n";
+	}
+	if (@objs > 1) {
+		die "$0: More than one hit on CPAN for $debiandir\n";
+	}
+	my $cpan_file = $objs[0]->cpan_file();
+
+	#<andy>
+	if ($cpan_file =~ /^Contact Author/) {
+	    die "$0: Error. cpan_file does not return file\n";
+	}
+	#</andy>
+	
+	my $dir = basename($cpan_file,'.tar.gz');
+
+	#<andy>
+	$dir = basename($dir,'.tgz');
+	#</andy>
+
+	my ($aname,$andysep,$andyver);
+	
+	print "<<<DIR:$dir>>>\n";
+	if (0) {#$dir =~ /(.*?)-(\d+(\.\d+))*$/) {
+	    $aname = $1;
+	    $andyver = $2;
+	} elsif ($dir =~ /(.*?)([-_])(\d+(\.\d+)*)$/) {
+		$aname = $1;
+		$andysep = $2;
+		$andyver = $3;
+	} else {
+	    print "$0: Couldn't extract version number for CPAN archive out of \"$dir\"\n";
+	    print "Please enter Name, Separator, and Version manually\n";
+	    print "aname: ";
+	    sub GetItem { 
+		my $entry;
+		my $approved = 0;
+		while (!$approved) {
+		    print "enter value: ";
+		    $entry = <>;
+		    chomp $entry;
+		    print "Is this correct?\n";
+		    my $response = <>;
+		    chomp $response;
+		    if ($response =~ /^[yY]$/) {
+			$approved = 1;
+		    } elsif ($response =~ /^(quit|exit)$/) {
+			die "You killed me!\n";
+		    }
+		}
+		return $entry;
+	    };
+	    print "aname: ";
+	    $aname = GetItem;
+	    print "andysep: ";
+	    $andysep = GetItem;
+	    print "andyver: ";
+	    $andyver = GetItem;
+	}
+	print "<<<ANA:$aname>>>\n";
+	
+	print "$aname $andysep $andyver\n";
+
+	# download archive
+	CPAN::get ($debiandir);
+	my $cpansourcedir = $CPAN::Config->{keep_source_where};
+
+	# set parameters
+	if ($opts{'version'} =~ /\S/) {
+	} elsif (0) {#(! defined $andysep) {
+	    $opts{'version'} = $objs[0]->cpan_version() eq "undef" ? $andyver : $objs[0]->cpan_version();
+	    $opts{'directory'} = "$aname-" . $opts{'version'};
+	} elsif ($andyver) {
+	    $opts{'version'} = $andyver;
+	    $opts{'directory'} = "${aname}${andysep}${andyver}";
+	}
+	$opts{'archive'} = "$cpansourcedir/authors/id/$cpan_file";
+
+	$opts{'source-tree'} = join ('/', $CPAN::Config->{build_dir}, $dir);
+
+	# determine package name and create Debian packaging files
+	# if necessary
+	my $pkgname = join ('-', map {lc($_)} (split(/::/, $debiandir)), 'perl');
+	$opts{'source-name'} = $pkgname;
+	
+	my $dconfdir = "$debianbasedir/$pkgname/debian";
+	
+	if (! -d $dconfdir) {
+		DebAux::Util::mkdir ($dconfdir);
+	}
+
+	sub mycopy {
+		my ($from, $to, %filter) = @_;
+
+		open (FROM, $from)
+			|| die "$0: Couldn't open $from: $!\n";
+		open (TO, ">$to")
+			|| die "$0: Couldn't open $to for writing: $!\n";
+		while (<FROM>) {
+			s/\#(.*?)\#/$filter{$1} || ''/eg;
+			print TO;
+		}
+		close (FROM)
+			|| die "$0: Couldn't close $from: $!\n";
+		close (TO)
+			|| die "$0: Couldn't close $to: $!\n";
+	}
+
+	my $offset = tz_local_offset();
+	my $offsetstr = sprintf('%s%02d%02d', (tz_local_offset > 0 ? '+' : '-'),
+							abs($offset / 3600), ($offset % 3600) / 60);
+	
+	my %filter = (DATE => strftime ('%a, %m %b %Y %H:%M:%S ', localtime())
+				  . $offsetstr,
+				  EMAIL => $ENV{'DEBEMAIL'},
+				  PACKAGE => $pkgname,
+				  USERNAME => $ENV{'DEBFULLNAME'},
+				  VERSION => $opts{'version'},
+				 );
+	
+	&mycopy ('/usr/share/debhelper/dh_make/debian/changelog',
+			 "$dconfdir/changelog", %filter);
+	&mycopy ($conf->get('sharedir') . '/cpan/control',
+			 "$dconfdir/control", %filter);
+	&mycopy ($conf->get('sharedir') . '/cpan/rules',
+			 "$dconfdir/rules", %filter);
+
+	$debiandir = "$debianbasedir/$pkgname";
+}
+
+if ($opts{'apt'}
+	|| ! (-d $debiandir || -f $debiandir || $opts{'source-tree'})) {
+	# looks like we have no information about this package,
+	# so we call apt-get source
+	$builddir = mkbuilddir ($builddir, $pkgname);
+	$opts{'source-tree'} = '';
+	chdir ($builddir) || die "$0: Couldn't enter build directory $builddir\n";
+	open (AGS, "apt-get --print-uris source $pkgname |");
+	while (<AGS>) {
+		if (/\s(.*?)_(.*?)\.orig\.tar\.gz/
+		   || /\s(.*?)_(.*?)(-\d+)?\.tar\.gz/) {
+			$opts{'source-tree'} = "$builddir/$1-$2";
+		}
+	}
+	close (AGS) || die "$0: Errors while executing apt-get source $pkgname\n";
+	unless ($opts{'source-tree'}) {
+		die "$0: Couldn't determine package version\n";
+	}
+	
+	# we may use patches, so we have to erase the old build
+	# directory
+	if (-d $opts{'source-tree'}) {
+		DebAux::Util::remove ($opts{'source-tree'});
+	}
+
+	open (AGS, "apt-get -qq source $pkgname |");
+	while (<AGS>) {
+		print;
+	}
+	close (AGS) || die "$0: Errors while executing apt-get source $debiandir\n";
+	$aptsource = 1;
+} elsif ($debiandir !~ m%^/%) {
+	$debiandir = cwd() . '/' . $debiandir;
+}
+
+# PARSE DEBIAN CHANGELOG
+# ======================
+
+# first get version number from changelog file
+my $changelog;
+
+if ($opts{'source-tree'}) {
+	$changelog = $opts{'source-tree'} . '/debian/changelog';
+}
+
+unless ($changelog && -f $changelog) {
+    $changelog = "$debiandir/debian/changelog";
+}
+
+my $vfound = 0;
+
+if (-f $changelog) {
+	my $inforef = parse_changelog ($changelog);
+
+	$debnumber = $inforef->{'debnumber'};
+	$vfound = $inforef->{'found'};
+	$srcname = $inforef->{'sourcename'};
+	$version = $inforef->{'version'};
+
+	unless ($vfound) {
+		die "$0: Couldn't detect package version number\n";
+	}
+	unless ($srcname) {
+		die "$0: Couldn't detect source package name\n";
+	}
+} else {
+	warn ("No changelog $changelog\n");
+}
+
+if ($opts{'source-name'}) {
+    $srcname = $opts{'source-name'};
+}
+parse_config("$debiandir/debbuild", \%vars, \%opts, $version, $srcname);
+$srcname = $vars{'source-name'};
+$vupstream = $vars{'version'};
+
+unless ($vfound || length($vupstream)) {
+    die "$0: Couldn't detect package version number\n";
+}
+unless ($srcname) {
+    die "$0: Couldn't detect source package name\n";
+}
+
+# add source name to build directory and check if
+# we have to create the directory
+
+unless ($aptsource) {
+	$builddir = mkbuilddir ($builddir, $srcname);
+}
+
+# MAKE ARCHIVE (optional)
+# =======================
+
+my $archive_tree = $sourcedir;
+
+unless ($aptsource || $vars{'empty'}) {
+	if ($vars{'make-archive'}) {
+		$archive_tree = $debiandir;
+		if ($vars{'source-tree'}) {
+			$archive_tree = $vars{'source-tree'};
+		}
+		chdir ($archive_tree) || die ("$0: Couldn't enter directory $archive_tree: $!\n");
+		my $retval = system ($vars{'make-archive'});
+		if ($retval) {
+			die "$0: Couldn't make archive\n";
+		}
+	}
+}
+
+# REMOVE OLD STUFF
+# ================
+
+chdir ($builddir)
+	|| die "$0: Couldn't enter build directory \"$builddir\": $!\n";
+
+unless ($aptsource) {
+	DebAux::Util::remove ("$srcname-$vupstream.orig");
+	DebAux::Util::remove ("$srcname-$vupstream");
+	
+	# remove old orig.tar.gz to avoid problems with dpkg-source
+	if (-f "${srcname}_$vupstream.orig.tar.gz") {
+		unlink ("${srcname}_$vupstream.orig.tar.gz")
+			|| die "$0: Couldn't remove ${srcname}_$vupstream.orig.tar.gz: $!\n";
+	}
+}
+
+# UNPACK ARCHIVE
+# ==============
+
+my ($curdir, $pkgdebdir);
+
+unless ($aptsource || $vars{'empty'}) {
+ FIND_ARCHIVE: {
+	my $arfile;
+	for my $arname (@{$vars{archive}}) {
+		if (substr($arname,0,1) eq '/') {
+			$arfile = $arname;
+		} else {
+			$arfile = "$archive_tree/$arname";
+		}
+		
+		push (@archivecandidates, $arfile);
+		if (-f $arfile) {
+			$archivefile = $arfile;
+			last FIND_ARCHIVE;
+		}
+	}
+
+	my $sourcesdir = "$debiandir/sources";
+	if ($vars{download}) {
+		# download archive
+
+		my $ua = LWP::UserAgent->new;
+		my ($url, $request, $response);
+
+		$request = HTTP::Request->new('GET', $vars{download});
+		print "Downloading $vars{download}:";
+		$response = $ua->request($request);
+		
+		unless ($response->is_success) {
+			print " failed.\n";
+			die "$0: Couldn't get original sources ($vars{download}): ", $response->code, " ", $response->message, "\n";
+		}
+		print " done.\n";
+		
+		my $archive = "$archive_tree/" . basename($vars{download});
+		open (ARCHIVE, ">$archive")
+			|| die "$0: Couldn't open $archive\n";
+		print ARCHIVE $response->content;
+		close (ARCHIVE);
+
+		$archivefile = $archive;
+	} elsif (-d $sourcesdir) {
+		# make an archive from the contents of this directory
+		$archivefile = &packsources ($builddir, $srcname, $vupstream, $sourcesdir);
+	}
+}
+
+	unless (defined $archivefile) {
+		die ("$0: No archive file found (Tried: ",
+			 join (', ', @archivecandidates), ")\n");
+	}
+	
+	if ($archivefile =~ /\.bz2$/) {
+		open UNPACK, "tar -xjf $archivefile |";
+	} else {
+		open UNPACK, "tar -xzf $archivefile |";
+	}
+	
+	while (<UNPACK>) {
+		print;
+	}
+	close (UNPACK) || die ("$0: Couldn't unpack \"$archivefile\"\n");
+	
+	# move to the location for the original sources
+	rename ($vars{'directory'}, "$srcname-$vupstream.orig")
+		|| die "$0: Couldn't move sources to original source directory: $vars{'directory'} => $srcname-$vupstream.orig : $!\n";
+	# copy to the package build directory
+	system ("cp -a $srcname-$vupstream.orig $srcname-$vupstream");
+	exit 0 if $opts{'stop-after-unpack'};
+}
+
+if ($vars{empty}) {
+	mkdir ("$srcname-$vupstream", 0755)
+        || die "$0: Couldn't create directory $srcname-$vupstream: $!\n";
+}
+
+# copy Debian files into that directory
+chdir ("$srcname-$vupstream")
+	|| die "$0: Couldn't enter directory $srcname-$vupstream: $!\n";
+unless ($aptsource) {
+	unless (-d 'debian') {
+		mkdir ('debian', 0755)
+			|| die "$0: Couldn't make debian directory: $!\n";
+	}
+	
+	$curdir = cwd;
+	$pkgdebdir = "$debiandir/debian";
+
+	if (-l "$debiandir/debian") {
+		unless ($pkgdebdir = readlink ("$debiandir/debian")) {
+			die "$0: Couldn't determine value of symbolic link: $!\n";
+		}
+	}
+
+	if (-e $pkgdebdir && -d $pkgdebdir) {
+		find (sub{&filecopy($pkgdebdir,"$curdir/debian")}, $pkgdebdir);
+	}
+
+	if (! $vfound && -f "debian/changelog") {
+		my $inforef = parse_changelog('debian/changelog');
+		$debnumber = $inforef->{debnumber};
+	}
+}
+
+# APPLY PATCHES
+# =============
+
+if (-d "$debiandir/patches") {
+	# apply any patches in this directory
+	find (\&applypatches, "$debiandir/patches");
+} 
+if (-f "$debiandir/sources.diff") {
+    chdir ("$builddir/$srcname-$vupstream")
+        || die "$0: Couldn't enter directory \"$builddir/$srcname-$vupstream\": $!\n";
+    open PATCH, "patch -p1 --no-backup-if-mismatch < $debiandir/sources.diff |";
+    while (<PATCH>) {
+        print;
+    }
+    close (PATCH) || die "$0: Patch failed\n";
+}
+if (-f "$debiandir/sources.tar") {
+    chdir ("$builddir/$srcname-$vupstream")
+        || die "$0: Couldn't enter directory \"$builddir\": $!\n";
+    open TAR, "tar -xvf $debiandir/sources.tar |";
+    while (<TAR>) {
+        print;
+    }
+    close (TAR) || die "$0: Unarchiving extra sources failed\n";
+}
+
+if ($vars{'extra-sources'}) {
+	find (sub{&filecopy("$debiandir/$vars{'extra-sources'}", "$builddir/$srcname-$vupstream/$vars{'extra-sources'}")},"$debiandir/$vars{'extra-sources'}");
+}
+
+# now make debian/rules executable
+unless ($aptsource) {
+	chmod (0755, "$builddir/$srcname-$vupstream/debian/rules")
+		|| die "$0: Couldn't make $builddir/$srcname-$vupstream/debian/rules executable: $!\n";
+}
+
+if ($opts{'release'}) {
+	download_orig_archive ($srcname, $vupstream, $builddir);
+}
+
+if ($opts{'chroot'}) {
+    chdir ("$builddir")
+        || die "$0: Couldn't enter directory \"$builddir\": $!\n";
+
+	# build Debian source packages
+    if (defined $debnumber) {
+		open DSRC, "dpkg-source -b $srcname-$vupstream |";
+	} else {
+		open DSRC, "dpkg-source -b $srcname-$vupstream '' |";
+	}
+	
+	while (<DSRC>) {
+		print;
+	}
+	close (DSRC) || die "$0: dpkg-source packing failed\n";
+	# copy them to the chroot
+	my $fv = $vupstream;
+	if (defined $debnumber) {
+		$fv .= "-$debnumber";
+	}
+
+	my @buildfiles;
+	if ($vars{empty} || ! defined $debnumber) {
+		@buildfiles = ("${srcname}_$vupstream.tar.gz", "${srcname}_$fv.dsc");
+	} else {
+		@buildfiles = ("${srcname}_$vupstream.orig.tar.gz", "${srcname}_$fv.diff.gz", "${srcname}_$fv.dsc");
+	}
+
+	open RSYNC, "rsync -vv @buildfiles root\@$chroothost:$chrootdir/tmp |";
+	while (<RSYNC>) {
+		print;
+	}
+	close (RSYNC) || die "$0: couldn't copy source stuff to chroot\n";
+	
+	# build the package
+#------------------------ START BUILD SCRIPT	
+    my $script = <<'EOF';
+	#!/usr/bin/perl
+	my $builddir = '/tmp';
+	my $lintian = '@lintian@';
+	my $debnumber = '@debnumber@';
+	my @pkglist;
+    my @pkgfiles;
+	my $rcmd = '';
+
+	$| = 1; # force immediate output
+    if ("@chroot@") {
+	    chroot("@chroot@") || die ("@prog@: couldn't go to chroot: $!\n");
+    } else {
+        $rcmd = ' -rfakeroot';
+    }
+
+	chdir("$builddir") || die ("@prog@: couldn't enter $builddir: $!\n");
+	open (DSRC, "dpkg-source -x @dsc@ |");
+	while (<DSRC>) {
+		print;
+	}
+	close (DSRC) || die ("@prog@: unpack of source failed\n");
+    exit unless @build@;
+	chdir("$builddir/@dir@") || die ("@prog@: couldn't enter $builddir/@dir@: $!\n");
+	open (BUILD, "dpkg-buildpackage$rcmd @buildopts@ |");
+	while (<BUILD>) {
+        if ($lintian) {
+			if (/^dpkg-deb:\s*building package \`(.*?)\' in \`(.*?)\'/) {
+                push (@pkglist, $2);
+			}
+		}
+		print;
+	}
+	close (BUILD) || die ("@prog@: Couldn't build package\n");
+	exit 0 unless $lintian;
+
+    if ($lintian) {
+		print "Running lintian on @pkglist\n";
+		open (LINTIAN, "lintian -i @pkglist |");
+		while (<LINTIAN>) {
+			print;
+		}
+		close (LINTIAN) || die ("@prog@: Lintian failed\n");
+	}
+EOF
+#----------------------- END BUILD SCRIPT
+	remote_perl ($script, {chroot => ($opts{'chroot-user'} ? '' : $chrootdir),
+						   dir => "${srcname}-$vupstream",
+                           dsc => "${srcname}_$fv.dsc",
+						   build => ($opts{'stop-before-build'} ? 0 : 1),
+						   buildopts => $vars{'build-options'},
+						   lintian => $vars{'lintian'},
+						   prog => $0,
+						   upstream => $vupstream,
+						   debnumber => $debnumber},
+				 $chroothost, $opts{'chroot-user'}, $chrootdir,
+				 @buildfiles);
+	exit 0;
+}
+
+exit 0 if $opts{'stop-before-build'};
+
+# BUILD PACKAGE
+# =============
+
+if ($opts{sign}) {
+    open BUILD, "dpkg-buildpackage -rfakeroot $vars{'build-options'} |";
+} else {
+    open BUILD, "dpkg-buildpackage -rfakeroot $vars{'build-options'} -uc -us |";
+}
+
+while (<BUILD>) {
+    if ($opts{'install'} || $opts{'lintian'} || $opts{'rpm'}) {
+        # filter out package names
+		if (/^dpkg-deb:\s*building package \`(.*?)\' in \`(.*?)\'/) {
+        	push (@pkglist, $2);
+		}
+    }
+    print;
+}
+
+# we need absolute paths
+my @pkgfiles;
+
+if ($aptsource) {
+	@pkgfiles = map {$_ =~ s%^..%$oldbuilddir/$srcname%; $_} @pkglist;
+} else {
+	@pkgfiles = map {$_ =~ s/^../$builddir/; $_} @pkglist;
+}
+
+close (BUILD) || die ("$0: Couldn't build package\n");
+
+# clean and reverse patches
+#open CLEAN, "fakeroot make -f debian/rules clean |";
+#while (<CLEAN>) {
+#	print;
+#}
+#close (CLEAN) || die ("$0: Error while cleansing build tree\n");
+
+# BUILD CORRESPONDING RPM's WITH ALIEN
+# ====================================
+
+if ($opts{'rpm'}) {
+	my $rpmdir = "$builddir/rpm";
+
+	if (! -d $rpmdir) {
+		mkdir ($rpmdir, 0755)
+			|| die ("$0: Couldn't create directory $rpmdir: $!\n");
+	}
+
+	chdir ($rpmdir)
+		|| die ("$0: Couldn't enter build directory $builddir: $!\n");
+	
+	for (@pkgfiles) {
+		print "Building RPM package from $_\n";
+		open (ALIEN, "alien --to-rpm $_ |");
+		while (<ALIEN>) {
+			print;
+		} 
+		close (ALIEN);
+	}	
+}
+
+# INSTALL PACKAGE
+# ===============
+
+if ($opts{'install'}) {
+	open (INSTALL, "ssh root\@localhost dpkg -i @pkgfiles |");
+	while (<INSTALL>) {
+		print;
+	}
+	close (INSTALL);
+}
+
+# CHECK PACKAGES WITH LINTIAN
+# ===========================
+
+if ($opts{'lintian'}) {
+	print "Running lintian on @pkgfiles\n";
+	open (LINTIAN, "lintian -i @pkgfiles |");
+	while (<LINTIAN>) {
+		print;
+	}
+	close (LINTIAN) || die ("$0: Lintian failed\n");
+}
+
+# 
+# FUNCTIONS
+# =========
+
+# --------------------------------------------------
+# FUNCTION: cut_epoch VERSION
+#
+# Removes epoch from VERSION and returns the result.
+# --------------------------------------------------
+
+sub cut_epoch {
+	my ($version) = @_;
+	$version =~ s/^\d+://;
+	$version;
+}
+
+# -------------------------------------------------------------
+# FUNCTION: download_orig_archive SRCNAME VUPSTREAM DIR
+#
+# Fetch the sources in the official archive to keep the md5sum.
+# -------------------------------------------------------------
+
+sub download_orig_archive {
+	my ($srcname, $vupstream, $dir) = @_;
+
+	my $ua = LWP::UserAgent->new;
+	my ($url, $request, $response);
+		
+	for (['ftp.debian.org','debian','main'],
+		 ['nonus.debian.org','debian-non-US','non-US/main']) {
+		$url = "http://$_->[0]/$_->[1]/pool/$_->[2]/" . ($srcname =~ /^lib/ ? substr($srcname,0,4) : substr($srcname,0,1)) . "/$srcname/${srcname}_$vupstream.orig.tar.gz";
+		$request = HTTP::Request->new('GET', $url);
+		$response = $ua->request($request);
+		last if $response->is_success();
+	}
+		
+	unless ($response->is_success) {
+		die "$0: Couldn't get original sources ($url): ", $response->code, " ", $response->message, "\n";
+	}
+		
+	my $origarchive = "$dir/${srcname}_$vupstream.orig.tar.gz";
+	open (ORIGARCHIVE, ">$origarchive")
+		|| die "$0: Couldn't open $origarchive\n";
+	print ORIGARCHIVE $response->content;
+	close (ORIGARCHIVE);
+}
+
+# ------------------------------------------------
+# FUNCTION: parse_changelog FILE
+#
+# Parses changelog FILE and returns hash reference
+# with the following key/value pairs:
+#
+# debnumber
+# found
+# sourcename
+# version
+# ------------------------------------------------
+
+sub parse_changelog {
+	my ($file) = @_;
+	my (%info);
+	
+	open (PARSECHL, "dpkg-parsechangelog -l$file |");
+	while (<PARSECHL>) {
+		if (/^Version: (.*)(-(\d.*))$/) {
+			$info{version} = $1;
+			$info{debnumber} = $3;
+			$info{found} = 1;
+		} elsif (/^Version: (.*)$/) {
+			$info{version} = $1;
+			$info{debnumber} = '';
+			$info{found} = 1;
+		} elsif (/^Source: (\S+)/) {
+			$info{sourcename} = $1;
+		}
+	}
+	close (PARSECHL) || die "$0: Errors while executing dpkg-parsechangelog on $file\n";
+	\%info;
+}
+
+# ------------------------------------------------------------
+# FUNCTION: parse_config FILE VREF OPTREF VERSION SOURCENAME
+#
+# Parses configuration file FILE and records the configuration
+# information into the hash referenced by VREF.
+# OPTREF is a reference to the hash with the already parsed
+# command line options.
+# SOURCENAME is the upstream package name.
+# VERSION is the version of the upstream package (may be
+# omitted).
+# ------------------------------------------------------------
+
+sub parse_config {
+	my ($file, $vref, $optref, $version, $sourcename) = @_;
+	my ($vv, $config, @pseudoargs, %defhash);
+
+	$vv = cut_epoch($version) if defined $version;
+
+	$config = new AppConfig ({ERROR => sub {die "$0: $file: @_\n";},
+							  GLOBAL => {ARGCOUNT => ARGCOUNT_ONE,
+										 EXPAND => EXPAND_ALL}});
+
+	%defhash = ('apt' => {ARGCOUNT => ARGCOUNT_NONE},
+				'archive' => {ARGCOUNT => ARGCOUNT_LIST},
+				'build-options' =>  {DEFAULT => ''},
+				'chroot' =>  {DEFAULT => ''},
+				'chroot-user' => {DEFAULT => ''},
+				'cpan' =>  {ARGCOUNT => ARGCOUNT_NONE},
+				'directory' =>  {DEFAULT => ''},
+				'download' => {DEFAULT => ''},
+				'empty' =>  {DEFAULT => 0},
+				'extra-sources' => {DEFAULT => ''},
+				'install' =>  {ARGCOUNT => ARGCOUNT_NONE},
+				'lintian' =>  {ARGCOUNT => ARGCOUNT_NONE},
+				'make-archive' =>  {DEFAULT => ''},
+				'release' =>  {ARGCOUNT => ARGCOUNT_NONE},
+				'rpm' =>  {DEFAULT => 0},
+				'sign' =>  {DEFAULT => 0},
+				'source-name' =>  {DEFAULT => $sourcename || ''},
+				'source-tree' =>  {DEFAULT => ''},
+				'stop-after-unpack' =>  {DEFAULT => 0},
+				'stop-before-build' =>  {DEFAULT => 0},
+				'version' =>  {DEFAULT => $vv});
+
+	$config -> define (%defhash);
+
+	if (-f $file) {
+		open (PKGVAR, $file) || die "$0: Couldn't open $file: $!\n";
+		$config -> file (\*PKGVAR);
+		close (PKGVAR);
+	}
+
+	for (keys %$optref) {
+		if ($optref->{$_}) {
+			if (exists ($defhash{$_}->{ARGCOUNT})
+				&& $defhash{$_}->{ARGCOUNT} == ARGCOUNT_NONE) {
+				push (@pseudoargs, "--$_");				
+			} else {
+				push (@pseudoargs, "--$_=$optref->{$_}");
+			}
+		}
+	}
+	
+	$config -> getopt (\@pseudoargs);
+	%$vref = $config -> varlist (".*");
+
+	unless (defined ($$vref{'version'})) {
+		die "$0: Couldn't detect version of upstream package\n";
+	}
+
+	# set missing variables based on upstream version
+	unless (length ($$vref{'directory'})) {
+		$$vref{'directory'} = "$$vref{'source-name'}-$$vref{version}";
+	}
+	
+	# sanity checks
+	for (keys (%$vref)) {
+		unless (defined ($config -> get ($_))) {
+			die "$0: $file: variable $_ not found\n";
+		}
+	}
+	if ($$vref{'directory'} !~ /^\w[\w\.\+-]*$/) {
+		die "$0: Suspicious directory name \"$$vref{'directory'}\"\n";
+	}
+
+	$vv = $$vref{'version'};
+
+	# defaults doesn't seem to work with lists
+	unless ($$vref{'empty'} || @{$$vref{'archive'}}) {
+		$$vref{'archive'} = ["$$vref{'source-name'}-$vv.tar.gz",
+							 "$$vref{'source-name'}-$vv.tar.gz",
+							 "$$vref{'source-name'}-$vv.tgz",
+							 "$$vref{'source-name'}-$vv.tar.bz2"];
+	}
+}
+
+# ----------------------------------------------
+# FUNCTION: applypatches
+#
+# Applies any files found in a directory tree
+# as patches to the original sources.
+# ----------------------------------------------
+
+sub applypatches {
+	return if $_ =~ /^\.\.?$/;
+	if (-d $File::Find::name && $_ eq 'CVS') {
+        $File::Find::prune = 1;
+        return;
+    }
+    chdir ("$builddir/$srcname-$vupstream")
+        || die "$0: Couldn't enter directory \"$builddir/$srcname-$vupstream\": $!\n";
+	print "applying patches from $File::Find::name\n";
+    open PATCH, "patch -p1 --no-backup-if-mismatch < $File::Find::name |";
+    while (<PATCH>) {
+        print;
+    }
+    close (PATCH) || die "$0: Patch $File::Find::name failed\n";
+}
+	
+# ---------------------------------------
+# FUNCTION: filecopy SOURCESDIR TARGETDIR
+# ---------------------------------------
+
+sub filecopy {
+	my ($sourcesdir, $targetdir) = @_;
+    my ($perms, $loc);
+    
+    return if $_ =~ /^\.\.?$/;
+    if (-d && $_ eq 'CVS') {
+        $File::Find::prune = 1;
+        return;
+    }
+	if (-f && (/^\.\#/ || /\.~(\d+\.)+\d+~$/)) {
+		# remove old CVS versions
+		return;
+	}
+	
+    # determine relative target location
+    $loc = substr ($File::Find::name, length($sourcesdir) + 1);
+	
+    if (-d) {
+        mkdir ("$targetdir/$loc", 0755)
+            || die "$0: Couldn't make directory $targetdir/$loc: $!\n";
+    } else {
+        my $perms = (stat ($_)) [2];
+        copy ("$File::Find::name", "$targetdir/$loc")
+            || die ("$0: Copy of $File::Find::name to $targetdir failed: $!\n");
+        chmod (oct (substr sprintf("%o", $perms), -3), "$targetdir/$loc")
+            || die ("$0: Couldn't change permissions on $targetdir/$loc: $!\n");
+    }
+}
+
+# -----------------------------------------------------------
+# FUNCTION: packsources BUILDDIR SRCNAME VUPSTREAM SOURCESDIR
+#
+# This function creates an tarball of all files within
+# the directory SOURCESDIR except CVS files. An toplevel
+# SRCNAME-VUPSTREAM is created which contains all files.
+# The packing is performed in the directory BUILDDIR.
+# -----------------------------------------------------------
+
+sub packsources {
+	my ($builddir, $srcname, $vupstream, $sourcesdir) = @_;
+	my $packdir = "$builddir/$srcname-$vupstream";
+	my $archivefile;
+	
+	# create directory
+	mkdir ($packdir, 0755)
+		|| die "$0: Couldn't make directory for packing sources: $packdir: $!\n";
+	# copy stuff from sources
+	find (sub{&filecopy($sourcesdir,$packdir)}, $sourcesdir);
+
+	# make an archive
+	chdir ($builddir)
+		|| die "$0: Couldn't enter build directory $builddir: $!\n";
+	open (PACK, "tar -czf $srcname-$vupstream.tar.gz $srcname-$vupstream |");
+	while (<PACK>) {print;}
+	close PACK
+		|| die "$0: Errors while packing sources\n";
+
+	"$srcname-$vupstream.tar.gz";
+}
+
+	
+# --------------------------------------------------------------------
+# FUNCTION: mkbuilddir BASEDIR SRCNAME
+#
+# Add source name SRCNAME to build base directory BASEDIR and check if
+# we have to create the directory. Returns the build directory.
+# --------------------------------------------------------------------
+
+sub mkbuilddir {
+	my ($basedir, $srcname) = @_;
+	my $builddir;
+	
+	if (-d $basedir) {
+		$builddir = $basedir . "/" . $srcname;
+		unless (-d $builddir) {
+			mkdir ($builddir, 0755)
+				|| die "$0: Couldn't create package build directory $builddir: $!\n";
+		}
+	} else {
+		die "$0: Build base directory \"$basedir\" doesn't exist\n";
+	}
+	$builddir;
+}
+
+# FUNCTION: remote_perl SCRIPT REPLACEMENTS HOST USER DIR FILES
+
+sub remote_perl {
+	my ($script, $repref, $host, $user, $dir, @files) = @_;
+	my $reg;
+	
+	for (keys %$repref) {
+		$reg = qr/\@$_\@/;
+		$script =~ s/$reg/$$repref{$_}/eg;
+	}
+
+	if ($user) {
+		sshopen2("root\@$host", *READER, *WRITER, "/bin/cat >$dir/tmp/debaux.$$");
+		print WRITER $script;
+		close WRITER;
+		while (<READER>) {
+		}
+		close READER;		
+
+		# change ownership on needed files
+		@files = map {"/tmp/$_"} @files;
+		push (@files, "/tmp/debaux.$$");
+		ssh_cmd("root\@$host", 'chroot', $dir, 'chown', $user, @files);
+		
+		sshopen2("root\@$host", *READER1, *WRITER1, "/bin/cat >$dir/tmp/debaux-launch.$$");
+		print WRITER1 <<EOF;
+#!/bin/sh
+/usr/bin/perl /tmp/debaux.$$
+rm /tmp/debaux.$$
+EOF
+        print WRITER1 "test\n";
+		close WRITER1;
+		while (<READER1>) {
+		}
+		close READER1;
+		ssh_cmd("root\@$host", 'chmod', '+x', "$dir/tmp/debaux*.$$");
+#		ssh_cmd("root\@$host", 'chroot', $dir, 'su',    $user, "/tmp/debaux-launch.$$");
+		sshopen2("root\@$host", *READER, *WRITER, "chroot $dir su $user /tmp/debaux-launch.$$");
+		ssh_cmd("root\@$host", 'rm', "$dir/tmp/debaux-launch.$$");
+		close WRITER;
+		while (<READER>) {
+			print;
+		}
+		close READER;
+	} else {
+		sshopen2("root\@$host", *READER, *WRITER, "/usr/bin/perl -");
+		print WRITER $script;
+		close WRITER;
+		while (<READER>) {
+			print;
+		}
+		close READER;
+	}
+}
+
+# DOCUMENTATION
+# =============
+
+=head1 NAME
+
+debaux-build - Debian package building script
+
+=head1 SYNOPSIS
+
+debaux-build [OPTIONS] DEBDIR [BUILDDIR SOURCEDIR]
+
+debaux-build --cpan Net::Google
+
+=head1 VERSION
+
+0.1.6
+
+=head1 DESCRIPTION
+
+debaux-build is a helper script for building Debian packages.
+Besides options it takes up to three parameters: DEBDIR, BUILDDIR,
+SOURCEDIR. DEBDIR is a required parameter.
+
+If DEBDIR doesn't exist, debaux-build tries to download the
+package with apt-get source.
+
+debaux-build applies all patches found in the DEBDIR subdirectory
+patches.
+
+If no source tarball exist and the DEBDIR subdirectory sources
+exist, all files in this directory get packed and used as
+source tarball.
+
+=head1 OPTIONS
+
+=over 4
+
+=item C<--apt>
+
+Forces apt-get source mode.
+
+=back
+
+=over 4
+
+=item C<--archive>
+
+Specifies file name of source archive.
+
+=back
+
+=over 4
+
+=item C<--build-options>
+
+Options passed to C<dpkg-buildpackage>.
+
+=back
+
+=over 4
+
+=item C<--cpan>
+
+Download Perl module from CPAN and create necessary Debian
+packaging files. You need to have the dh-make Debian package
+installed in order to utilize this option.
+
+=back
+
+=over 4
+
+=item C<--empty>
+
+Empty package (no source code archive). Intended to use
+for task packages.
+
+=back
+
+=over 4
+
+=item C<--extra-sources>
+
+Specifies a directory below DEBDIR which is copied to the
+build directory.
+
+=back
+
+=over 4
+
+=item C<-i, --install>
+
+Install build package.
+
+=back
+
+=over 4
+
+=item C<-l, --lintian>
+
+Run lintian on the generated packages.
+
+=back
+
+=over 4
+
+=item C<--make-archive>
+
+Intended to use for native Debian packages. Specify the commands
+to build the archive here.
+
+=back
+
+=over 4
+
+=item C<--release>
+
+The generated packages are targeted for official Debian packages.
+
+=back
+
+=over 4
+
+=item C<--rpm, --alien>
+
+Convert generated packages into RPM packages by
+using C<alien>.
+
+=back
+
+=over 4
+
+=item C<-s, --sign>
+
+Sign source package and changelog.
+
+=back
+
+=over 4
+
+=item C<--source-tree>
+
+Instructs C<debaux-build> to use the specified directory instead of
+an archive file.
+
+=back
+
+=over 4
+
+=item C<--stop-before-build>
+
+Stop script before calling C<dpkg-buildpackage>.
+
+=back
+
+=head1 CONFIGURATION FILE
+
+C<debaux-build> looks for the configuration file C<.debauxrc> in the
+home directory and in the current directory and
+recognizes the following directives:
+
+=over 4
+
+=item C<debauxdir> PACKAGE
+
+Used as C<DEBDIR> for package if it is an existing directory.
+Considered before the <debiandir> directive.
+
+=item C<debiandir>
+
+If the directory C<DEBDIR> on the commandline doesn't exist,
+C<debaux-build> appends C<DEBDIR> to the specified directory
+and tries again.
+
+=item C<sourcedir>
+
+Directory with the source archives. Can be overridden by the
+commandline parameter C<SOURCEDIR>.
+
+=item C<source-tree> PACKAGE
+
+Directory with the source code for PACKAGE.
+
+=back
+
+=head1 SEE ALSO
+
+dpkg(8), dpkg-source(1), apt-get(8)
+
+=head1 AUTHOR
+
+Stefan Hornburg (Racke) <racke@linuxia.de>.
+
+=head1 LICENSE
+
+debaux-build comes with ABSOLUTELY NO WARRANTY. This is free software, and
+you are welcome to redistribute and modify it under the terms of the
+GNU General Public License.
+
+=head1 COPYRIGHT
+
+Copyright 2000,2001,2002,2003 Stefan Hornburg (Racke) <racke@linuxia.de>.
+
+=cut

@@ -1,0 +1,46 @@
+#!/usr/bin/perl -w
+
+use BOSS::Config;
+use Manager::Dialog qw(SubsetSelect);
+
+use UniLang::Util::TempAgent;
+
+use Data::Dumper;
+
+# search using all available methodologies
+
+$specification = q(
+	<search>...	Searches to be acted upon
+  );
+
+my $config =
+  BOSS::Config->new
+  (Spec => $specification);
+my $conf = $config->CLIConfig;
+
+my @topics = @{$conf->{'<search>'}};
+
+my $tempagent = UniLang::Util::TempAgent->new
+  ();
+
+foreach my $topic (@topics) {
+  Search($topic);
+}
+
+sub Search {
+  my $topic = shift;
+  # do a CSO search
+  my $message = $tempagent->MyAgent->QueryAgent
+    (
+     Receiver => "CSO",
+     Contents => "-a $topic",
+    );
+  print Dumper($message);
+
+  # do a radar-web-search
+  my $res = `radar-web-search "$topic"`;
+  print Dumper($res);
+
+  # do a raiders-of-the-ftp-sites
+  # # do a system-finder and system recommender search
+}

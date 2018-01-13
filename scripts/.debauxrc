@@ -1,0 +1,8 @@
+# debauxdir= PACKAGE
+#     Used as "DEBDIR" for package if it is an existing directory. Considered before the <debiandir> directive. 
+debiandir=/tmp/debian/
+#     If the directory "DEBDIR" on the commandline doesn't exist, "debaux-build" appends "DEBDIR" to the specified directory and tries again. 
+# sourcedir
+#     Directory with the source archives. Can be overridden by the commandline parameter "SOURCEDIR". 
+# source-tree PACKAGE
+#     Directory with the source code for PACKAGE.

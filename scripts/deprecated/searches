@@ -1,0 +1,8 @@
+- GNU Compiler Chain (gcc), specifically the C++ compiler (g++).
+- MySQL client development library.
+- libxml2 development library.
+- Berkeley DB  development library version 3.x or 4.x.
+- Perl compatible regular expression (libpcre) development library version 3.x.
+- zlib compression/decompression development library.
+- OpenSSL SSL/TLS development library.
+- The en_IE@euro locale.

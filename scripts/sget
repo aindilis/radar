@@ -1,0 +1,19 @@
+#!/usr/bin/perl -w
+
+use Manager::Dialog qw(QueryUser SubsetSelect ApproveCommands);
+
+my $search = QueryUser("Search?: ");
+my $desc = {};
+foreach my $line (split /\n/,`apt-cache search $search`) {
+  if ($line =~ /^(\S+) - (.*)$/) {
+    $desc->{$1} = $2;
+  }
+}
+
+my @res = SubsetSelect
+  (Set => [keys %$desc],
+   Desc => $desc);
+
+ApproveCommands
+  (Commands =>
+   ["sudo apt-get install ".join (" ",@res)]);

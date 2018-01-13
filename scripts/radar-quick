@@ -1,0 +1,65 @@
+#!/usr/bin/perl -w
+
+# this attempts to automate radar
+
+# check if its a url
+
+use WWW::Mechanize;
+
+my $matches = {};
+foreach my $arg (@ARGV) {
+  if ($arg =~ /::/) {
+    $matches->{$arg} = "Perl Module";
+    next;
+  }
+  if (-e $arg) {
+    $matches->{$arg} = "Local File";
+    next;
+  }
+  if ($arg =~ /^(http|ftp|file):\/\//i) {
+    $matches->{$arg} = "URL";
+    next;
+  }
+  my $mech = WWW::Mechanize->new;
+  $mech->get( "http://freshmeat.net/projects/$arg/");
+  if ($mech->content !~ /The project name you specified could not be found in our database/) {
+    $matches->{$arg} = "Freshmeat";
+    next;
+  }
+  $mech->get( "http://sourceforge.net/projects/$arg/");
+  if ($mech->content !~ /Invalid Project/) {
+    $matches->{$arg} = "SourceForge";
+    next;
+  }
+  $mech->get( "http://code.google.com/p/$arg/");
+  if ($mech->content !~ /Not Found/) {
+    $matches->{$arg} = "SourceForge";
+    next;
+  }
+  # it's at this point either SVN, Debian Package, or Perl Module
+  my $match;
+  foreach my $line (split /\n/, `apt-cache search "$arg"`) {
+    if ($line =~ /^(.+?) - (.+)/) {
+      my $package = $1;
+      if ($package =~ /^$arg$/i) {
+	$match = 1;
+      }
+    }
+  }
+  if ($match) {
+    $matches->{$arg} = "Debian Package";
+    next;
+  }
+  # now try cpan
+  # skip for now
+  print "Probably CPAN\n";
+  # do a radar-web-search for it 
+  system "radar-web-search -p \"$arg\"";
+}
+
+foreach my $arg (@ARGV) {
+  if ($matches->{$arg}) {
+    print "$arg is a ".$matches->{$arg}."\n";
+    system "radar -m \"".$matches->{$arg}."\" \"$arg\"";
+  }
+}

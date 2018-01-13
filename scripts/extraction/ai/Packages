@@ -1,0 +1,895 @@
+Package: webclopedia
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Hovy, Lin, Hermjakob, Ravichandran
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/webclopedia_1.0.0-1_i386.deb
+URL: http://www.isi.edu/natural-language/projects/webclopedia/
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Multilingual information delivery 
+ Multilingual information delivery 
+
+Package: rewrite
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Knight, Marcu, Germann, Graehl, Al-Onaizan, Fraser, Koehn, Yamada, Daume, Munteanu and Och
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/rewrite_1.0.0-1_i386.deb
+URL: http://www.isi.edu/natural-language/projects/rewrite/
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Statistical machine translation and abstracting 
+ Statistical machine translation and abstracting 
+
+Package: transonic
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Knight, Marcu, Ettelaie and Och
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/transonic_1.0.0-1_i386.deb
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Handheld speech translation 
+ Handheld speech translation 
+
+Package: adgen
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Knight, Marcu, Graehl
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/adgen_1.0.0-1_i386.deb
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Advanced generation for question answering 
+ Advanced generation for question answering 
+
+Package: pdp
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Marcu, Soricut
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/pdp_1.0.0-1_i386.deb
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Probabilistic Methods for Discourse Parsing
+ Probabilistic Methods for Discourse Parsing
+
+Package: textmap
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Marcu, Hovy, Knight, Hermjakob, Echihabi, Ravichandran, Soo-Min Kim
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/textmap_1.0.0-1_i386.deb
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: An Intelligent Question-Answering Assistant 
+ An Intelligent Question-Answering Assistant 
+
+Package: ade
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Johnson, Rickel
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/ade_1.0.0-1_i386.deb
+URL: http://www.isi.edu/isd/ADE/ade.html
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Automated distance education 
+ Automated distance education 
+
+Package: vet
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Johnson, Rickel
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/vet_1.0.0-1_i386.deb
+URL: http://www.isi.edu/isd/VET/vet.html
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Virtual environments for training 
+ Virtual environments for training 
+
+Package: vfts
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Johnson, Rickel, Shaw
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/vfts_1.0.0-1_i386.deb
+URL: http://vfts.usc.edu/%7B
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Virtual factory teaching system 
+ Virtual factory teaching system 
+
+Package: parented/carmen's 
+                      bright ideas
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Johnson, Marsella, LaBore
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/parented/carmen's 
+                      bright ideas_1.0.0-1_i386.deb
+URL: http://www.isi.edu/isd/carte/parented/parented.html
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Interactive pedagogical drama 
+ Interactive pedagogical drama 
+
+Package: steveco
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Johnson, Rickel
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/steveco_1.0.0-1_i386.deb
+URL: http://www.isi.edu/isd/STEVECO/steveco.html
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description:  productizable pedagogical agent technology
+  productizable pedagogical agent technology
+
+Package: merl
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Rickel
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/merl_1.0.0-1_i386.deb
+URL: http://www.isi.edu/%7Erickel/aied01paco.ps
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Tutorial Dialogue with Pedagogical Agents 
+ Tutorial Dialogue with Pedagogical Agents 
+
+Package: si
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Johnson, Rickel, Shaw, Qu
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/si_1.0.0-1_i386.deb
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Social Intelligence for Educational Software
+ Social Intelligence for Educational Software
+
+Package: ariadne
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Knoblock, Muslea-M, Muslea-I, Tuchinda
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/ariadne_1.0.0-1_i386.deb
+URL: http://www.isi.edu/info-agents/index.html
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Information mediation from semi-structured web sources 
+ Information mediation from semi-structured web sources 
+
+Package: heracles
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Knoblock, Ambite, Thakkar
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/heracles_1.0.0-1_i386.deb
+URL: http://www.isi.edu/info-agents/heracles/
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Interactive Data-driven constraint-based planning
+ Interactive Data-driven constraint-based planning
+
+Package: theseus
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Knoblock, Barish
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/theseus_1.0.0-1_i386.deb
+URL: http://www.isi.edu/info-agents/theseus/
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Dataflow-based information agent execution
+ Dataflow-based information agent execution
+
+Package: rap teams
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Rosenbloom, Johnson, Tambe, Pynadath, Scerri, SI
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/rap teams_1.0.0-1_i386.deb
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Heterogeneous Robot-Agent-Person Teams
+ Heterogeneous Robot-Agent-Person Teams
+
+Package: mathmass
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Lerman, Galstyan
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/mathmass_1.0.0-1_i386.deb
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Mathematical analysis of multi agent systems
+ Mathematical analysis of multi agent systems
+
+Package: conro
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Shen
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/conro_1.0.0-1_i386.deb
+URL: http://www.isi.edu/conro/
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Self-reconfigurable robots <br>(Shen)
+ Self-reconfigurable robots <br>(Shen)
+
+Package: soala
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Shen
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/soala_1.0.0-1_i386.deb
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Self-Organizing and Auto-Learning Agents
+ Self-Organizing and Auto-Learning Agents
+
+Package: solar
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Shen
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/solar_1.0.0-1_i386.deb
+URL: http://www.isi.edu/robots/solar/
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Self-assembly of space solar power systems
+ Self-assembly of space solar power systems
+
+Package: slick
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Gil, Kim, Ratnakar
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/slick_1.0.0-1_i386.deb
+URL: http://www.isi.edu/ikcap/slick/
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Skills for learning to interacterively capture knowledge 
+ Skills for learning to interacterively capture knowledge 
+
+Package: docker
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Gil, Kim, Ratnakar, Spraragen
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/docker_1.0.0-1_i386.deb
+URL: http://www.isi.edu/ikcap/docker/
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Helping people connect software
+ Helping people connect software
+
+Package: scec/it
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Kim, Ratnakar, Spraragen
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/scec/it_1.0.0-1_i386.deb
+URL: http://www.isi.edu/ikcap/scec-it/
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Information infrastructure for earthquake research<br>(Kim, Ratnakar, Spraragen) <!-- <li> JIST: Capturing Interactive Information Analysis 
+ Information infrastructure for earthquake research<br>(Kim, Ratnakar, Spraragen) <!-- <li> JIST: Capturing Interactive Information Analysis 
+
+Package: powerloom
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Chalupsky, Russ
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/powerloom_1.0.0-1_i386.deb
+URL: http://www.isi.edu/isd/LOOM/PowerLoom/index.html
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Knowledge representation and reasoning 
+ Knowledge representation and reasoning 
+
+Package: kojak
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Chalupsky, Russ, Shen, Adibi, Lin
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/kojak_1.0.0-1_i386.deb
+URL: http://www.isi.edu/%7Ehans/eeld/
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Scalable Semantic Link Discovery
+ Scalable Semantic Link Discovery
+
+Package: edc
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Hovy, Arens, Ambite, Philpot
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/edc_1.0.0-1_i386.deb
+URL: http://blombos.isi.edu:8000/
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Information Integration leveraging large ontologies for digital government 
+ Information Integration leveraging large ontologies for digital government 
+
+Package: cognitive grids
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Gil, Blythe, Kim
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/cognitive grids_1.0.0-1_i386.deb
+URL: http://www.isi.edu/ikcap/cognitive-grids/
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Intelligent middleware for distributed problem solving
+ Intelligent middleware for distributed problem solving
+
+Package: trellis
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Gil, Blythe, Kim, Ratnakar
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/trellis_1.0.0-1_i386.deb
+URL: http://www.isi.edu/ikcap/trellis/
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Capturing and exploiting semantic relationships for information and knowledge management 
+ Capturing and exploiting semantic relationships for information and knowledge management 
+
+Package: triple
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Decker
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/triple_1.0.0-1_i386.deb
+URL: http://triple.semanticweb.org/
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: An RDF query, inference and transformation language
+ An RDF query, inference and transformation language
+
+Package: ontoagents
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Decker
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/ontoagents_1.0.0-1_i386.deb
+URL: http://www-db.stanford.edu/OntoAgents/
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: An information foodchain for advanced applications in the Internet
+ An information foodchain for advanced applications in the Internet
+
+Package: argumentation
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Tambe, Jung
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/argumentation_1.0.0-1_i386.deb
+URL: http://www.isi.edu/teamcore/tambe/papers/2001/Agents01-Argue.ps
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Negotiation via Argumentation for Conflict Resolution 
+ Negotiation via Argumentation for Conflict Resolution 
+
+Package: constable
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Gil, Blythe
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/constable_1.0.0-1_i386.deb
+URL: http://www.isi.edu/ikcap/constable/
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Helping users to examine and modify constraints
+ Helping users to examine and modify constraints
+
+Package: c*s*t*rd
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Hovy
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/c*s*t*rd_1.0.0-1_i386.deb
+URL: http://www.isi.edu/natural-language/projects/C-ST-RD.html
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: 
+ 
+
+Package: datacrystal
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/datacrystal_1.0.0-1_i386.deb
+URL: http://www.isi.edu/dcrystal/
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Data mining 
+ Data mining 
+
+Package: dreamteam
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Shen
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/dreamteam_1.0.0-1_i386.deb
+URL: http://www.isi.edu/isd/dreamteam/
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Wheeled mobile robots for Robocup Soccer
+ Wheeled mobile robots for Robocup Soccer
+
+Package: dmt
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Hovy, Marcu
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/dmt_1.0.0-1_i386.deb
+URL: http://www.isi.edu/natural-language/
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Discourse processing for machine translation
+ Discourse processing for machine translation
+
+Package: dynamite
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Tambe, Modi, Scerri
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/dynamite_1.0.0-1_i386.deb
+URL: http://www.isi.edu/dynamite/dynamite.html
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Dynamic Negotiating Adaptive Multi-agent Teams
+ Dynamic Negotiating Adaptive Multi-agent Teams
+
+Package: electric 
+                      elves
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Chalupsky et al in paper
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/electric 
+                      elves_1.0.0-1_i386.deb
+URL: http://www.isi.edu/agents-united/
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Agent technology for supporting human organizations 
+ Agent technology for supporting human organizations 
+
+Package: expect
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Gil, Kim, Blythe
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/expect_1.0.0-1_i386.deb
+URL: http://www.isi.edu/ikcap/expect/
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: A reflective architecture for knowledge acquisition 
+ A reflective architecture for knowledge acquisition 
+
+Package: gazelle
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Knight, Hermjakob, Stalls, Alonaizan, Germann, Köhn, Langkilde, Yamada, Hovy
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/gazelle_1.0.0-1_i386.deb
+URL: http://www.isi.edu/natural-language/projects/GAZELLE.html
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: 
+ 
+
+Package: inspect
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Gil
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/inspect_1.0.0-1_i386.deb
+URL: http://www.isi.edu/expect/inspect.html
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Plan critiquing for air campaign planning
+ Plan critiquing for air campaign planning
+
+Package: isis
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Tambe, Marsella
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/isis_1.0.0-1_i386.deb
+URL: http://www.isi.edu/soar/tambe/socteam.html
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: ISI Synthetic Robocup Team
+ ISI Synthetic Robocup Team
+
+Package: kanal
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Gil, Blythe, Kim, Ratnakar,Spraragen
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/kanal_1.0.0-1_i386.deb
+URL: http://www.isi.edu/ikcap/kanal/
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Knowledge analysis on process models 
+ Knowledge analysis on process models 
+
+Package: loom
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Chalupsky, Russ
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/loom_1.0.0-1_i386.deb
+URL: http://www.isi.edu/isd/LOOM/LOOM-HOME.html#LOOM
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Knowledge representation and reasoning based on description logic
+ Knowledge representation and reasoning based on description logic
+
+Package: mediadoc
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Johnson, Marsella
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/mediadoc_1.0.0-1_i386.deb
+URL: http://www.isi.edu/isd/media-doc/media-doc-body.html
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Dynamic generation of multimedia software explanation and documentation 
+ Dynamic generation of multimedia software explanation and documentation 
+
+Package: nitrogen
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Knight, Langkilde
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/nitrogen_1.0.0-1_i386.deb
+URL: http://www.isi.edu/natural-language/projects/nitrogen/demos.html
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Robust, large-scale natural language generation using text corpora
+ Robust, large-scale natural language generation using text corpora
+
+Package: ontosaurus
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Russ
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/ontosaurus_1.0.0-1_i386.deb
+URL: http://www.isi.edu/isd/ontosaurus.html
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Ontology browsing and editing 
+ Ontology browsing and editing 
+
+Package: phosphorus
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Gil
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/phosphorus_1.0.0-1_i386.deb
+URL: http://www.isi.edu/expect/projects/agents/
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: ontology-based agent capability matching 
+ ontology-based agent capability matching 
+
+Package: probes
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Johnson, Rickel
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/probes_1.0.0-1_i386.deb
+URL: http://www.isi.edu/isd/PROBES/probes.html
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Simulation analysis and explanation 
+ Simulation analysis and explanation 
+
+Package: robocup rescue
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Tambe, Nair
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/robocup rescue_1.0.0-1_i386.deb
+URL: http://www.isi.edu/%7Enair/Rescue/
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Search and Rescue Simulation for Large Scale Disasters 
+ Search and Rescue Simulation for Large Scale Disasters 
+
+Package: sensus
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Knight, Hovy
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/sensus_1.0.0-1_i386.deb
+URL: http://www.isi.edu/natural-language/resources/sensus.html
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Large ontology of linguistic knowledge 
+ Large ontology of linguistic knowledge 
+
+Package: sims
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Arens, Knoblock, Shen, Ambite
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/sims_1.0.0-1_i386.deb
+URL: http://www.isi.edu/info-agents/index.html
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: 
+ 
+
+Package: soar
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Rosenbloom, Tambe
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/soar_1.0.0-1_i386.deb
+URL: http://www.isi.edu/soar/soar-homepage.html
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Cognitive architecture for simulating intelligent agents 
+ Cognitive architecture for simulating intelligent agents 
+
+Package: steveco
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Johnson, Rickel
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/steveco_1.0.0-1_i386.deb
+URL: http://www.isi.edu/isd/STEVECO/steveco.html
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description:  productizable pedagogical agent technology
+  productizable pedagogical agent technology
+
+Package: summarist
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Hovy
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/summarist_1.0.0-1_i386.deb
+URL: http://www.isi.edu/natural-language/projects/SUMMARIST.html
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: 
+ 
+
+Package: teamcore
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Tambe, Pynadath, Scerry
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/teamcore_1.0.0-1_i386.deb
+URL: http://www.isi.edu/teamcore/teamcore.html
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Teamwork-based cooperation among heterogeneous problem solvers 
+ Teamwork-based cooperation among heterogeneous problem solvers 
+
+Package: temple
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Gil, Blythe, Kim
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/temple_1.0.0-1_i386.deb
+URL: http://www.isi.edu/ikcap/temple/
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Template enhancement through knowledge acquisition 
+ Template enhancement through knowledge acquisition 
+
+Package: vet
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Johnson, Rickel, Whitney, Lance
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/vet_1.0.0-1_i386.deb
+URL: http://www.isi.edu/isd/VET/vet.html
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Virtual environments for training
+ Virtual environments for training
+
+Package: yoda
+Priority: optional
+Section: artificial intelligence
+Installed-Size: 144
+Maintainer: Shen
+Architecture: i386
+Version: 1.0.0-1
+Depends: libc6 (>= 2.2.4-4)
+Filename: pool/main/yoda_1.0.0-1_i386.deb
+URL: http://www.isi.edu/isd/yoda/
+Size: 10241024
+MD5sum: 03cdc2c944551aa3ecdd0d3979071e77
+Description: Robot agent with observation and discovery capabilities
+ Robot agent with observation and discovery capabilities
+
